@@ -53,6 +53,13 @@ public class Row {
 	
 	private List<int[]> cachedResult = null;
 	
+	public List<int[]> computePossibleStates(int[] currentRow, boolean discardCache){
+		if(discardCache){
+			cachedResult = null;
+		}
+		return computePossibleStates(currentRow);
+	}
+	
 	public List<int[]> computePossibleStates(int[] currentRow){
 		if(cachedResult == null){
 			cachedResult = new ArrayList<int[]>();

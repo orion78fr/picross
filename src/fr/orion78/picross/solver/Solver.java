@@ -125,46 +125,6 @@ public class Solver {
 			if(iter == 2000){
 				break;
 			}
-			
-			/*for(int i = 0; i < w; i++){
-				List<int[]> st = columns[i].computePossibleStates(g.getValues()[i]);
-				int[] result = Arrays.copyOf(st.get(0), h);
-				
-				for(int j = 1; j < st.size(); j++){
-					for(int k = 0; k < h; k++){
-						if(result[k] != st.get(j)[k]){
-							result[k] = 0;
-						}
-					}
-				}
-				
-				for(int k = 0; k < h; k++){
-					if(result[k] != 0){
-						g.set(i, k, result[k] == -1 ? -1 : 1);
-						modified.add(new Pair(PairType.ROW, k));
-					}
-				}
-			}
-			
-			for(int i = 0; i < h; i++){
-				List<int[]> st = rows[i].computePossibleStates(g.getRowValues(i));
-				int[] result = Arrays.copyOf(st.get(0), w);
-				
-				for(int j = 1; j < st.size(); j++){
-					for(int k = 0; k < w; k++){
-						if(result[k] != st.get(j)[k]){
-							result[k] = 0;
-						}
-					}
-				}
-				
-				for(int k = 0; k < w; k++){
-					if(result[k] != 0){
-						g.set(k, i, result[k] == -1 ? -1 : 1);
-						modified.add(new Pair(PairType.COL, k));
-					}
-				}
-			}*/
 		}
 
 		System.out.println(iter + " iter");

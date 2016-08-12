@@ -8,6 +8,9 @@ public class Grid {
 	private Row[] columns;
 	
 	private int[][] values;
+	
+	private int maxNumCol;
+	private int maxNumRow;
 
 	public Grid(int w, int h, int[][] columns, int[][] rows) {
 		if(columns.length != w){
@@ -37,14 +40,30 @@ public class Grid {
 		
 		this.columns = new Row[w];
 		this.rows = new Row[h];
+		this.maxNumCol = columns[0].length;
+		this.maxNumRow = rows[0].length;
 		for(int i = 0; i < w; i++){
 			this.columns[i]= new Row(columns[i]);
+			if(columns[i].length > this.maxNumCol){
+				this.maxNumCol = columns[i].length;
+			}
 		}
 		for(int i = 0; i < h; i++){
 			this.rows[i]= new Row(rows[i]);
+			if(rows[i].length > this.maxNumRow){
+				this.maxNumRow = rows[i].length;
+			}
 		}
 		
 		this.values = new int[w][h];
+	}
+
+	public int getMaxNumCol() {
+		return maxNumCol;
+	}
+
+	public int getMaxNumRow() {
+		return maxNumRow;
 	}
 
 	public int getWidth() {
@@ -58,9 +77,17 @@ public class Grid {
 	public Row[] getRows() {
 		return rows;
 	}
+	
+	public Row getRow(int row){
+		return rows[row];
+	}
 
 	public Row[] getColumns() {
 		return columns;
+	}
+	
+	public Row getColumn(int col) {
+		return columns[col];
 	}
 
 	public int[][] getValues() {
@@ -76,10 +103,30 @@ public class Grid {
 	}
 
 	public void set(int x, int y, int value){
-		if(this.values[x][y] != 0 && this.values[x][y] != value){
+		/*if(this.values[x][y] != 0 && this.values[x][y] != value){
 			System.out.println("WARNING something probably went wrong");
-		}
+		}*/
 		this.values[x][y] = value;
+	}
+	
+	public boolean isCorrect(){
+		if(!isCompleted()){
+			return false;
+		}
+		// Verify columns
+		for(int i = 0; i < this.w; i++){
+			if(columns[i].computePossibleStates(values[i], true).size() != 1){
+				return false;
+			}
+		}
+		// Verify rows
+		for(int i = 0; i < this.h; i++){
+			if(rows[i].computePossibleStates(getRowValues(i), true).size() != 1){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public boolean isCompleted(){
