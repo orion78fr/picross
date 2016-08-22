@@ -2,6 +2,7 @@ package fr.orion78.picross.view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import javax.swing.JFrame;
@@ -18,7 +19,7 @@ import fr.orion78.picross.model.Grid;
 
 public class MainView extends JFrame {
 	private static final long serialVersionUID = -805650085889143277L;
-	private static int SCALE = 25;
+	private static int SCALE = 10;
 
 	private boolean finished = false;
 	
@@ -39,22 +40,34 @@ public class MainView extends JFrame {
 				// Draw Background
 				gr.setColor(Color.WHITE);
 				gr.fillRect(0, 0, xOffset + g.getWidth()*(SCALE+1), yOffset + g.getHeight()*(SCALE+1));
-				
+								
 				// Draw Numbers
-				Font f = new Font("arial", 0, SCALE);
+				Font f = new Font("Arial", Font.PLAIN, SCALE);
 				gr.setFont(f);
 				gr.setColor(Color.BLACK);
+				// http://stackoverflow.com/questions/1779708/java-awt-fitting-text-in-a-box
+				// Seems to work...
+				FontMetrics fm = gr.getFontMetrics();
+				double shrink = (double)SCALE / fm.getHeight();
+				double newSize = SCALE * shrink;
+				double newAsc = fm.getAscent() * shrink;
+				int textOffset = (int)newAsc - fm.getLeading();
+				f = f.deriveFont((float)newSize);
+				gr.setFont(f);
+				fm = gr.getFontMetrics();
 				
 				for(int i = 0; i < g.getHeight(); i++){
 					int[] r = g.getRow(i).getValues();
 					for(int j = 0; j < r.length; j++){
-						gr.drawString(("" + r[j]), j*(SCALE+1), yOffset + (i+1)*(SCALE+1) - 2);
+						String s = String.valueOf(r[j]);
+						gr.drawString(s, j*(SCALE+1) + (int)((SCALE - fm.getStringBounds(s, gr).getMaxX())/2), yOffset + i*(SCALE+1) + textOffset);
 					}
 				}
 				for(int i = 0; i < g.getWidth(); i++){
 					int[] r = g.getColumn(i).getValues();
 					for(int j = 0; j < r.length; j++){
-						gr.drawString(("" + r[j]), xOffset + (i)*(SCALE+1), (j+1)*(SCALE+1));
+						String s = String.valueOf(r[j]);
+						gr.drawString(s, xOffset + (i)*(SCALE+1) + (int)((SCALE - fm.getStringBounds(s, gr).getMaxX())/2), j *(SCALE+1) + textOffset);
 					}
 				}
 				

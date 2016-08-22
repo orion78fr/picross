@@ -18,7 +18,7 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO
 		
-		File f = new File("parachute.txt");
+		File f = new File("beach_side.txt");
 		char[] c = new char[(int) f.length()];
 		Reader r;
 		try {

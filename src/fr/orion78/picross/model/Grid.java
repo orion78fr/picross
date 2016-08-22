@@ -32,7 +32,7 @@ public class Grid {
 			}
 		}
 		if(suma != sumb){
-			throw new RuntimeException("Incorrect rows or columns : sum mismatch");
+			throw new RuntimeException("Incorrect rows or columns : sum mismatch (" + suma + ", " + sumb + ")");
 		}
 		
 		this.w = w;

@@ -17,4 +17,22 @@ public class Pair {
 		this.t = t;
 		this.row = row;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Pair)){
+			return false;
+		}
+		Pair p = (Pair) obj;
+		return p.t.equals(this.t) && p.row == this.row;
+	}
+	@Override
+	public int hashCode() {
+		return this.row;
+	}
+	
+	@Override
+	public String toString() {
+		return (t.equals(PairType.COL) ? "Column " : "Row ") + row;
+	}
 }

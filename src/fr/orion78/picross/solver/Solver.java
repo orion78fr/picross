@@ -41,6 +41,7 @@ public class Solver {
 					for(int k = 0; k < values[j] - remaining; k++, currentCell++){
 						g.set(i,currentCell,1);
 						modified.add(new Pair(PairType.ROW, currentCell));
+						modified.add(new Pair(PairType.COL, i));
 					}
 				} else {
 					currentCell += values[j];
@@ -68,6 +69,7 @@ public class Solver {
 					for(int k = 0; k < values[j] - remaining; k++, currentCell++){
 						g.set(currentCell,i,1);
 						modified.add(new Pair(PairType.COL, currentCell));
+						modified.add(new Pair(PairType.ROW, i));
 					}
 				} else {
 					currentCell += values[j];
@@ -77,12 +79,13 @@ public class Solver {
 		}
 		
 		// For each modified row, compute all new possible states, and set all identical cells
-		
 		int iter = 0;
 		while(!modified.isEmpty()){
 			iter++;
 			
 			Pair p = modified.getBest();
+			
+			System.out.println(p);
 			
 			if(p.getType().equals(PairType.COL)){
 				List<int[]> st = columns[p.getRow()].computePossibleStates(g.getValues()[p.getRow()]);
@@ -100,6 +103,7 @@ public class Solver {
 					if(result[k] != 0 && g.getValues()[p.getRow()][k] != result[k]){
 						g.set(p.getRow(), k, result[k]);
 						modified.add(new Pair(PairType.ROW, k));
+						modified.add(new Pair(PairType.COL, p.getRow()));
 					}
 				}
 			} else {
@@ -118,13 +122,17 @@ public class Solver {
 					if(result[k] != 0 && g.getValues()[k][p.getRow()] != result[k]){
 						g.set(k, p.getRow(), result[k]);
 						modified.add(new Pair(PairType.COL, k));
+						modified.add(new Pair(PairType.ROW, p.getRow()));
 					}
 				}
 			}
 			
-			if(iter == 2000){
+			
+			if(iter == 100){
 				break;
 			}
+
+			System.out.println(iter);
 		}
 
 		System.out.println(iter + " iter");
