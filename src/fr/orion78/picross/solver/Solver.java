@@ -128,7 +128,7 @@ public class Solver {
 			}
 			
 			
-			if(iter == 100){
+			if(iter == 1){
 				break;
 			}
 
