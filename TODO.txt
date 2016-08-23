@@ -1,0 +1,9 @@
+Implement other methods of solving (corner method for example).
+
+Add a standard input (mouse/keyboard).
+
+Add a menu to load, save ...
+
+Solve the OutOfMemoryException during the computing of all possibilities.
+
+Add scrolling and zooming (both with touch screen and keyboard).
