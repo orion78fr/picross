@@ -1,8 +1,5 @@
 package fr.orion78.picross.solver;
 
-import java.util.Arrays;
-import java.util.List;
-
 import fr.orion78.picross.model.Grid;
 import fr.orion78.picross.model.Row;
 
@@ -88,17 +85,7 @@ public class Solver {
 			System.out.println(p);
 			
 			if(p.getType().equals(PairType.COL)){
-				List<int[]> st = columns[p.getRow()].computePossibleStates2(g.getValues()[p.getRow()]);
-				
-				int[] result = Arrays.copyOf(st.get(0), h);
-				
-				for(int j = 1; j < st.size(); j++){
-					for(int k = 0; k < h; k++){
-						if(result[k] != st.get(j)[k]){
-							result[k] = 0;
-						}
-					}
-				}
+				int[] result = columns[p.getRow()].computePossibleStates3(g.getValues()[p.getRow()]);
 				
 				for(int k = 0; k < h; k++){
 					if(result[k] != 0 && g.getValues()[p.getRow()][k] != result[k]){
@@ -108,16 +95,7 @@ public class Solver {
 					}
 				}
 			} else {
-				List<int[]> st = rows[p.getRow()].computePossibleStates2(g.getRowValues(p.getRow()));
-				int[] result = Arrays.copyOf(st.get(0), w);
-				
-				for(int j = 1; j < st.size(); j++){
-					for(int k = 0; k < w; k++){
-						if(result[k] != st.get(j)[k]){
-							result[k] = 0;
-						}
-					}
-				}
+				int[] result = rows[p.getRow()].computePossibleStates3(g.getRowValues(p.getRow()));
 				
 				for(int k = 0; k < w; k++){
 					if(result[k] != 0 && g.getValues()[k][p.getRow()] != result[k]){

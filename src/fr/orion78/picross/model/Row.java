@@ -1,8 +1,9 @@
 package fr.orion78.picross.model;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
+import fr.orion78.picross.solver.StaticPoints;
+import fr.orion78.picross.solver.exception.NoStaticPointsException;
 
 public class Row {
 	private int[] values;
@@ -15,8 +16,8 @@ public class Row {
 		return values;
 	}
 	
-	public List<int[]> computePossibleStates2(final int[] currentRow){
-		List<int[]> l = new ArrayList<int[]>();
+	public int[] computePossibleStates3(int[] currentRow){
+		StaticPoints sp = new StaticPoints();
 		
 		int sum = 0;
 		for(int i = 0; i < this.values.length; i++){
@@ -27,13 +28,18 @@ public class Row {
 		
 		int[] currentRes = new int[currentRow.length];
 		
-		computePossibleStatesHelper(l, currentRow, currentRes, 0, 0, remainingSpaces);
+		try {
+			computePossibleStatesHelper(sp, currentRow, currentRes, 0, 0, remainingSpaces);
+		} catch(NoStaticPointsException e) {
+			// So, nothing to do here, it's for fast-exit
+		}
 		
-		return l;
+		return sp.getResult();
 	}
 	
-	private void computePossibleStatesHelper(final List<int[]> l, final int[] currentRow,
-			final int[] currentRes, final int resIndex, final int valuesIndex, final int remainingSpaces){
+	private void computePossibleStatesHelper(StaticPoints sp, int[] currentRow,
+			int[] currentRes, int resIndex, int valuesIndex, int remainingSpaces)
+					throws NoStaticPointsException{
 		// We make a copy to be sure we don't mess with the other iterations.
 		// That's why the field is final, just in case.
 		int[] newRes = Arrays.copyOf(currentRes, currentRes.length);
@@ -45,10 +51,7 @@ public class Row {
 				newRes[i] = -1;
 			}
 			if(isCompatible(newRes, currentRow)){
-				l.add(newRes);
-				if(l.size() % 10000 == 0){
-					System.out.println(l.size());
-				}
+				sp.add(newRes);
 			}
 		} else {
 			for(int i = 0; i <= remainingSpaces; i++){
@@ -66,7 +69,7 @@ public class Row {
 				}
 				if(isCompatible(newRes, currentRow)){
 					// If it's still compatible with the current row, we can continue to try
-					computePossibleStatesHelper(l, currentRow, newRes,
+					computePossibleStatesHelper(sp, currentRow, newRes,
 							resIndex + i + this.values[valuesIndex] + (valuesIndex+1 != this.values.length ? 1:0), valuesIndex + 1,
 							remainingSpaces - i);
 				}

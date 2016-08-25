@@ -114,7 +114,8 @@ public class Grid {
 			return false;
 		}
 		// Verify columns
-		for(int i = 0; i < this.w; i++){
+		// TODO
+		/*for(int i = 0; i < this.w; i++){
 			if(columns[i].computePossibleStates2(values[i]).size() != 1){
 				return false;
 			}
@@ -124,7 +125,7 @@ public class Grid {
 			if(rows[i].computePossibleStates2(getRowValues(i)).size() != 1){
 				return false;
 			}
-		}
+		}*/
 		
 		return true;
 	}
