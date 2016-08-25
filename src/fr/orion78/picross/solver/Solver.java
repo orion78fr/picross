@@ -18,7 +18,7 @@ public class Solver {
 		Row[] columns = g.getColumns();
 		Row[] rows = g.getRows();
 		
-		FrequencySet<Pair> modified = new FrequencySet<Pair>();
+		FrequencySetWithMemory<Pair> modified = new FrequencySetWithMemory<Pair>();
 		
 		// First pass : for each column then row, do the line method
 		for(int i = 0; i < w; i++){
@@ -88,7 +88,8 @@ public class Solver {
 			System.out.println(p);
 			
 			if(p.getType().equals(PairType.COL)){
-				List<int[]> st = columns[p.getRow()].computePossibleStates(g.getValues()[p.getRow()]);
+				List<int[]> st = columns[p.getRow()].computePossibleStates2(g.getValues()[p.getRow()]);
+				
 				int[] result = Arrays.copyOf(st.get(0), h);
 				
 				for(int j = 1; j < st.size(); j++){
@@ -107,7 +108,7 @@ public class Solver {
 					}
 				}
 			} else {
-				List<int[]> st = rows[p.getRow()].computePossibleStates(g.getRowValues(p.getRow()));
+				List<int[]> st = rows[p.getRow()].computePossibleStates2(g.getRowValues(p.getRow()));
 				int[] result = Arrays.copyOf(st.get(0), w);
 				
 				for(int j = 1; j < st.size(); j++){
@@ -128,7 +129,7 @@ public class Solver {
 			}
 			
 			
-			if(iter == 1){
+			if(iter == 1000){
 				break;
 			}
 

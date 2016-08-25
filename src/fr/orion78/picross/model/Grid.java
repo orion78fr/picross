@@ -115,13 +115,13 @@ public class Grid {
 		}
 		// Verify columns
 		for(int i = 0; i < this.w; i++){
-			if(columns[i].computePossibleStates(values[i], true).size() != 1){
+			if(columns[i].computePossibleStates2(values[i]).size() != 1){
 				return false;
 			}
 		}
 		// Verify rows
 		for(int i = 0; i < this.h; i++){
-			if(rows[i].computePossibleStates(getRowValues(i), true).size() != 1){
+			if(rows[i].computePossibleStates2(getRowValues(i)).size() != 1){
 				return false;
 			}
 		}

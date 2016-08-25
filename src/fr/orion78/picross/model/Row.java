@@ -1,7 +1,7 @@
 package fr.orion78.picross.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 public class Row {
@@ -15,107 +15,71 @@ public class Row {
 		return values;
 	}
 	
-	private static List<int[]> computeSpaces(int nbCell, int spaces){
+	public List<int[]> computePossibleStates2(final int[] currentRow){
 		List<int[]> l = new ArrayList<int[]>();
 		
-		if(nbCell == 1){
-			// Trivial case: there is only one cell
-			int[] result = new int[nbCell];
-			result[0] = spaces;
-			l.add(result);
-		} else if(spaces == 0){
-			// Trivial case: there is zero spaces
-			int[] result = new int[nbCell];
-			l.add(result);
-		} else if(spaces == 1){
-			// Trivial case: there is only one space
-			for(int i = 0; i < nbCell; i++){
-				int[] result = new int[nbCell];
-				result[i] = 1;
-				l.add(result);
-			}
-		} else {
-			for(int i = 0; i <= spaces; i++){
-				List<int[]> subList = computeSpaces(nbCell-1, i);
-				for(int[] sub : subList){
-					int[] result = new int[nbCell];
-					result[0] = spaces-i;
-					for(int j = 0; j < nbCell - 1; j++){
-						result[j+1] = sub[j];
-					}
-					l.add(result);
-				}
-			}
+		int sum = 0;
+		for(int i = 0; i < this.values.length; i++){
+			sum += this.values[i];
 		}
+		// Spaces needed - mandatory spaces
+		int remainingSpaces = (currentRow.length - sum) - (this.values.length - 1);
+		
+		int[] currentRes = new int[currentRow.length];
+		
+		computePossibleStatesHelper(l, currentRow, currentRes, 0, 0, remainingSpaces);
 		
 		return l;
 	}
 	
-	private List<int[]> cachedResult = null;
-	
-	public List<int[]> computePossibleStates(int[] currentRow, boolean discardCache){
-		if(discardCache){
-			cachedResult = null;
-		}
-		return computePossibleStates(currentRow);
-	}
-	
-	public List<int[]> computePossibleStates(int[] currentRow){
-		if(cachedResult == null){
-			cachedResult = new ArrayList<int[]>();
+	private void computePossibleStatesHelper(final List<int[]> l, final int[] currentRow,
+			final int[] currentRes, final int resIndex, final int valuesIndex, final int remainingSpaces){
+		// We make a copy to be sure we don't mess with the other iterations.
+		// That's why the field is final, just in case.
+		int[] newRes = Arrays.copyOf(currentRes, currentRes.length);
 		
-			int sum = 0;
-			for(int i = 0; i < this.values.length; i++){
-				sum += this.values[i];
+		// Trivial case
+		if(valuesIndex == this.values.length){
+			// We used all the values in the row, the only things remaining are spaces.
+			for(int i = resIndex; i < newRes.length; i++){
+				newRes[i] = -1;
 			}
-			// Spaces needed - mandatory spaces
-			int spaces = (currentRow.length - sum) - (this.values.length - 1);
-			
-			List<int[]> possibleSpaces = computeSpaces(this.values.length + 1, spaces);
-			
-			for(int[] possibleSpace : possibleSpaces){
-				int[] rowRes = new int[currentRow.length];
-				int index = 0;
-				
-				// Beginning spaces
-				for(int j = 0; j < possibleSpace[0]; j++, index++){
-					rowRes[index] = -1;
-				}
-				
-				// Values + intermediary spaces
-				for(int i = 0; i < this.values.length; i++){
-					for(int j = 0; j < this.values[i]; j++, index++){
-						rowRes[index] = 1;
-					}
-					// Mandatory space
-					if(i != this.values.length - 1){
-						rowRes[index] = -1;
-						index++;
-					}
-					for(int j = 0; j < possibleSpace[i+1]; j++, index++){
-						rowRes[index] = -1;
-					}
-				}
-				
-				if(isCompatible(rowRes, currentRow)){
-					cachedResult.add(rowRes);
+			if(isCompatible(newRes, currentRow)){
+				l.add(newRes);
+				if(l.size() % 10000 == 0){
+					System.out.println(l.size());
 				}
 			}
 		} else {
-			Iterator<int[]> it = cachedResult.iterator();
-			while(it.hasNext()){
-				int[] next = it.next();
-				if(!isCompatible(next, currentRow)){
-					it.remove();
+			for(int i = 0; i <= remainingSpaces; i++){
+				// We add an amount of space ...
+				for(int j = resIndex; j < resIndex+i; j++){
+					newRes[j] = -1;
+				}
+				// ... then the next value ...
+				for(int j = resIndex+i; j < resIndex+i+this.values[valuesIndex]; j++){
+					newRes[j] = 1;
+				}
+				// ... plus the mandatory space if we are not at the end.
+				if(valuesIndex+1 != this.values.length){
+					newRes[resIndex + i + this.values[valuesIndex]] = -1;
+				}
+				if(isCompatible(newRes, currentRow)){
+					// If it's still compatible with the current row, we can continue to try
+					computePossibleStatesHelper(l, currentRow, newRes,
+							resIndex + i + this.values[valuesIndex] + (valuesIndex+1 != this.values.length ? 1:0), valuesIndex + 1,
+							remainingSpaces - i);
 				}
 			}
 		}
-		
-		return cachedResult;
 	}
 
 	private boolean isCompatible(int[] rowRes, int[] currentRow) {
 		for(int i = 0; i < rowRes.length; i++){
+			if(rowRes[i] == 0){
+				// The line resolution isn't finished
+				break;
+			}
 			if(currentRow[i] == -1 && rowRes[i] != -1){
 				return false;
 			} else if(currentRow[i] == 1 && rowRes[i] != 1){
