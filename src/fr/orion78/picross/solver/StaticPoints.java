@@ -7,12 +7,15 @@ import fr.orion78.picross.solver.exception.NoStaticPointsException;
 
 public class StaticPoints {
 	private int[] points = null;
-	private int remaining = 0;
+	private int remaining;
+	
+	public StaticPoints(int remaining) {
+		this.remaining = remaining;
+	}
 	
 	public void add(int[] value) throws NoStaticPointsException{
 		if(this.points == null){
 			this.points = Arrays.copyOf(value, value.length);
-			this.remaining = value.length;
 		} else {
 			if(this.points.length != value.length){
 				throw new IncorrectSizeException();

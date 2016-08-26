@@ -17,7 +17,13 @@ public class Row {
 	}
 	
 	public int[] computePossibleStates3(int[] currentRow){
-		StaticPoints sp = new StaticPoints();
+		int remainingCells = 0;
+		for(int i = 0; i < currentRow.length; i++){
+			if(currentRow[i] == 0){
+				remainingCells++;
+			}
+		}
+		StaticPoints sp = new StaticPoints(remainingCells);
 		
 		int sum = 0;
 		for(int i = 0; i < this.values.length; i++){
